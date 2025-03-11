@@ -509,11 +509,13 @@ struct SetMouseTeleopControl {
       );
       const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
       const cylinder = new THREE.Mesh(geometry, material);
+      cylinder.position.set(0, 0, cylinder_length / 2);
+      cylinder.rotation.x = Math.PI / 2;  // z-up to MeshCat's y-up
 
       // Define a custom drag plane normal.
       const dragPlaneNormal = new THREE.Vector3({normal_x}, {normal_y}, {normal_z});
 
-      // Rotate dragPlaneNormal from Drake's Z-up to MeshCat/THREE.js' y-up convention.
+      // Rotate dragPlaneNormal from Drake's z-up to MeshCat/THREE.js' y-up convention.
       dragPlaneNormal.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
 
       // Initialize DragControls.
@@ -524,7 +526,14 @@ struct SetMouseTeleopControl {
 	      dragPlaneNormal,
 	      renderer.domElement,
       );
+
+      // Add callback to send object's position on drag.
       dragControls.addEventListener('drag', (event) => {
+          this.connection.send(msgpack.encode({{
+            'type': 'dragged_object',
+            'name': '{teleop_name}',
+            'value': event.object.position,
+          }
 	      renderer.render(scene, camera);
       });
 
@@ -542,6 +551,7 @@ struct SetMouseTeleopControl {
       });
 
     })""",
+      fmt::arg("teleop_name", name),
       fmt::arg("radius", cylinder_radius),
       fmt::arg("length", cylinder_length),
       fmt::arg("normal_x", dragPlaneNormal(0)),
