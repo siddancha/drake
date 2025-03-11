@@ -513,6 +513,9 @@ struct SetMouseTeleopControl {
       // Define a custom drag plane normal.
       const dragPlaneNormal = new THREE.Vector3({normal_x}, {normal_y}, {normal_z});
 
+      // Rotate dragPlaneNormal from Drake's Z-up to MeshCat/THREE.js' y-up convention.
+      dragPlaneNormal.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+
       // Initialize DragControls.
       const dragControls = new MeshCat.DragControls(
 	      cylinder,
