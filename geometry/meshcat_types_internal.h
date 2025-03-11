@@ -485,6 +485,77 @@ struct SetSliderControl {
                      keycode2);
 };
 
+struct SetMouseTeleopControl {
+  std::string type{"set_object_from_code"};
+  std::string name;
+  std::string path;
+  double cylinder_radius{};
+  double cylinder_length{};
+  math::RigidTransformd transform;
+  Eigen::Vector3d dragPlaneNormal;
+
+  std::string transpile_to_threejs_code() const {
+    return fmt::format(R"""(() => {
+      const orbitControls = this.controls;
+      const scene = this.scene;
+      const camera = this.camera;
+      const renderer = this.renderer;
+
+      // Create a cylinder and apply DragControls
+      const cylinder_radius = {cylinder_radius};
+      const cylinder_length = {cylinder_length};
+      const geometry = new THREE.CylinderGeometry(
+	      cylinder_radius, cylinder_radius, cylinder_length, 32,
+      );
+      const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+      const cylinder = new THREE.Mesh(geometry, material);
+
+      // Define a custom drag plane normal.
+      const dragPlaneNormal = new THREE.Vector3({normal_x}, {normal_y}, {normal_z});
+
+      // Initialize DragControls.
+      const dragControls = new MeshCat.DragControls(
+	      cylinder,
+	      camera,
+	      orbitControls,
+	      dragPlaneNormal,
+	      renderer.domElement,
+      );
+      dragControls.addEventListener('drag', (event) => {
+	      renderer.render(scene, camera);
+      });
+
+      // Add hover event listeners for visual feedback
+      dragControls.addEventListener('hoveron', (event) => {
+	      // Set emissive color to create a subtle glow effect when hovering
+	      event.object.material.emissive.setScalar(0.2);
+	      renderer.render(scene, camera);
+      });
+
+      dragControls.addEventListener('hoveroff', (event) => {
+	      // Reset emissive color when not hovering
+	      event.object.material.emissive.setScalar(0.0);
+	      renderer.render(scene, camera);
+      });
+
+    })""",
+      fmt::arg("radius", cylinder_radius),
+      fmt::arg("length", cylinder_length),
+      fmt::arg("normal_x", dragPlaneNormal(0)),
+      fmt::arg("normal_y", dragPlaneNormal(1)),
+      fmt::arg("normal_z", dragPlaneNormal(2)));
+  }
+
+  // NOLINTNEXTLINE(runtime/references) cpplint disapproves of msgpack choices.
+  void msgpack_pack(msgpack::packer<std::stringstream>& o) const {
+    o.pack_map(3);
+    PACK_MAP_VAR(o, type);
+    PACK_MAP_VAR(o, path);
+    const std::string code = transpile_to_threejs_code();
+    PACK_MAP_VAR(o, code);
+  }
+};
+
 struct SetSliderValue {
   std::string type{"set_control_value"};
   std::string name;
