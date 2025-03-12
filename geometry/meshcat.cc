@@ -1814,6 +1814,41 @@ class Meshcat::Impl {
     }
   }
 
+  // This function is public via the PIMPL.
+  void AddMouseTeleop(std::string name, std::string path,
+                      double cylinder_radius, double cylinder_length,
+                      RigidTransformd init_transform,
+                      Eigen::Vector3d drag_plane_normal) {
+    DRAKE_DEMAND(IsThread(main_thread_id_));
+
+    internal::SetMouseTeleopControl data;
+    data.name = std::move(name);
+    data.path = std::move(path);
+    data.cylinder_radius = cylinder_radius;
+    data.cylinder_length = cylinder_length;
+    data.transform = std::move(init_transform);
+    data.drag_plane_normal = std::move(drag_plane_normal);
+
+    {
+      std::lock_guard<std::mutex> lock(controls_mutex_);
+      if (mouse_teleops_.find(data.name) != mouse_teleops_.end()) {
+        throw std::logic_error(
+            fmt::format("Meshcat already has a mouse teleop named {}.", data.name));
+      }
+      controls_.emplace_back(data.name);
+      mouse_teleops_[data.name] = data;
+      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size() + mouse_teleops_.size()));
+    }
+
+    Defer([this, data = std::move(data)]() {
+      DRAKE_DEMAND(IsThread(websocket_thread_id_));
+      DRAKE_DEMAND(app_ != nullptr);
+      std::stringstream message_stream;
+      msgpack::pack(message_stream, data);
+      app_->publish("all", message_stream.str(), uWS::OpCode::BINARY, false);
+    });
+  }
+
   Meshcat::Gamepad GetGamepad() const {
     DRAKE_DEMAND(IsThread(main_thread_id_));
 
@@ -2408,10 +2443,11 @@ class Meshcat::Impl {
   mutable std::mutex controls_mutex_;
   std::map<std::string, internal::SetButtonControl, std::less<>> buttons_{};
   std::map<std::string, internal::SetSliderControl, std::less<>> sliders_{};
+  std::map<std::string, internal::SetMouseTeleopControl, std::less<>> mouse_teleops_{};
   std::string camera_target_message_;
   Meshcat::Gamepad gamepad_{};
-  std::vector<std::string> controls_{};  // Names of buttons and sliders in the
-                                         // order they were added.
+  std::vector<std::string> controls_{};  // Names of buttons, sliders and mouse
+                                         // teleops in the order they were added.
   // The socket for the browser that is sending the camera pose.
   WebSocket* camera_pose_source_{};
   std::optional<math::RigidTransformd> camera_pose_;
@@ -2835,6 +2871,14 @@ bool Meshcat::DeleteSlider(std::string name, bool strict) {
 
 void Meshcat::DeleteAddedControls() {
   impl().DeleteAddedControls();
+}
+
+void Meshcat::AddMouseTeleop(std::string name, std::string path,
+                             double cylinder_radius, double cylinder_length,
+                             RigidTransformd init_transform,
+                             Eigen::Vector3d drag_plane_normal) {
+  impl().AddMouseTeleop(name, path, cylinder_radius, cylinder_length,
+                        init_transform, drag_plane_normal);
 }
 
 Meshcat::Gamepad Meshcat::GetGamepad() const {

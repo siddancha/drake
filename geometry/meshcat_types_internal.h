@@ -492,7 +492,7 @@ struct SetMouseTeleopControl {
   double cylinder_radius{};
   double cylinder_length{};
   math::RigidTransformd transform;
-  Eigen::Vector3d dragPlaneNormal;
+  Eigen::Vector3d drag_plane_normal;
 
   std::string transpile_to_threejs_code() const {
     return fmt::format(R"""(() => {
@@ -530,7 +530,7 @@ struct SetMouseTeleopControl {
       // Add callback to send object's position on drag.
       dragControls.addEventListener('drag', (event) => {
           this.connection.send(msgpack.encode({{
-            'type': 'dragged_object',
+            'type': 'mouse_teleop',
             'name': '{teleop_name}',
             'value': event.object.position,
           }
@@ -554,9 +554,9 @@ struct SetMouseTeleopControl {
       fmt::arg("teleop_name", name),
       fmt::arg("radius", cylinder_radius),
       fmt::arg("length", cylinder_length),
-      fmt::arg("normal_x", dragPlaneNormal(0)),
-      fmt::arg("normal_y", dragPlaneNormal(1)),
-      fmt::arg("normal_z", dragPlaneNormal(2)));
+      fmt::arg("normal_x", drag_plane_normal.x()),
+      fmt::arg("normal_y", drag_plane_normal.y()),
+      fmt::arg("normal_z", drag_plane_normal.z()));
   }
 
   // NOLINTNEXTLINE(runtime/references) cpplint disapproves of msgpack choices.

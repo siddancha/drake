@@ -831,6 +831,18 @@ class Meshcat {
    the meshcat browser (e.g. for cameras and lights). */
   void DeleteAddedControls();
 
+  /** Adds a mouse-based teleoperation widget to the scene.
+  @param name The name of this teleoperation widget
+  @param path The path in the scene tree where the widget will be placed
+  @param cylinder_radius The radius of the cylindrical widget
+  @param cylinder_length The length of the cylindrical widget
+  @param init_transform The initial transform of cylindrical widget
+  @param drag_plane_normal The normal vector of the plane that constrains widget motion */
+  void AddMouseTeleop(std::string name, std::string path,
+                      double cylinder_radius, double cylinder_length,
+                      math::RigidTransformd init_transform,
+                      Eigen::Vector3d drag_plane_normal);
+
   /** Status of a gamepad obtained from the Meshcat javascript client. */
   struct Gamepad {
     /** Passes this object to an Archive.
