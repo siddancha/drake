@@ -392,6 +392,11 @@ void DefineMeshcat(py::module m) {
             cls_doc.GetSliderNames.doc)
         .def("DeleteSlider", &Class::DeleteSlider, py::arg("name"),
             py::arg("strict") = true, cls_doc.DeleteSlider.doc)
+        .def("AddMouseTeleop", &Class::AddMouseTeleop, py::arg("name"),
+            py::arg("object_path"), py::arg("drag_plane_normal"),
+            cls_doc.AddMouseTeleop.doc)
+        .def("GetMouseTeleopObjectPosition", &Class::GetMouseTeleopObjectPosition,
+            py::arg("name"), cls_doc.GetMouseTeleopObjectPosition.doc)
         .def("DeleteAddedControls", &Class::DeleteAddedControls,
             cls_doc.DeleteAddedControls.doc)
         .def("GetGamepad", &Class::GetGamepad, cls_doc.GetGamepad.doc)

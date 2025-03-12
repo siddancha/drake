@@ -488,7 +488,7 @@ struct SetSliderControl {
 struct SetMouseTeleopControl {
   std::string type{"eval_code"};
   std::string name;
-  std::string path;
+  std::string object_path;
   Eigen::Vector3d drag_plane_normal;
   Eigen::Vector3d position;
 
@@ -500,12 +500,12 @@ struct SetMouseTeleopControl {
       const renderer = this.renderer;
 
       // Split the path string into segments and remove empty segments
-      const pathSegments = '{path}'.split('/').filter(Boolean).concat(["<object>"]);
+      const pathSegments = '{object_path}'.split('/').filter(Boolean).concat(["<object>"]);
       
       // Get the object from the scene by path
       const object = this.scene_tree.find(pathSegments).object;
       if (!object) {{
-        console.error(`Object at path '{path}' not found in the scene`);
+        console.error(`Object at path '{object_path}' not found in the scene`);
         // return null;
       }}
 
@@ -555,7 +555,7 @@ struct SetMouseTeleopControl {
       websocket_send();
     )""",
       fmt::arg("teleop_name", name),
-      fmt::arg("path", path),
+      fmt::arg("object_path", object_path),
       fmt::arg("normal_x", drag_plane_normal.x()),
       fmt::arg("normal_y", drag_plane_normal.y()),
       fmt::arg("normal_z", drag_plane_normal.z()));

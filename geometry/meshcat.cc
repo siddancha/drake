@@ -1815,13 +1815,13 @@ class Meshcat::Impl {
   }
 
   // This function is public via the PIMPL.
-  void AddMouseTeleop(std::string name, std::string path,
+  void AddMouseTeleop(std::string name, std::string object_path,
                       Eigen::Vector3d drag_plane_normal) {
     DRAKE_DEMAND(IsThread(main_thread_id_));
 
     internal::SetMouseTeleopControl data;
     data.name = std::move(name);
-    data.path = std::move(path);
+    data.object_path = std::move(object_path);
     data.drag_plane_normal = std::move(drag_plane_normal);
 
     {
@@ -1840,7 +1840,7 @@ class Meshcat::Impl {
       msgpack::pack(message_stream, data);
       std::string message = message_stream.str();
       app_->publish("all", message, uWS::OpCode::BINARY, false);
-      SceneTreeElement& e = scene_tree_root_[data.path + "/mouse_control"];
+      SceneTreeElement& e = scene_tree_root_[data.object_path + "/mouse_control"];
       e.object().emplace() = std::move(message);
     });
   }
@@ -2900,13 +2900,13 @@ void Meshcat::DeleteAddedControls() {
   impl().DeleteAddedControls();
 }
 
-void Meshcat::AddMouseTeleop(std::string name, std::string path,
+void Meshcat::AddMouseTeleop(std::string name, std::string object_path,
                              Eigen::Vector3d drag_plane_normal) {
-  impl().AddMouseTeleop(name, path, drag_plane_normal);
+  impl().AddMouseTeleop(std::move(name), object_path, std::move(drag_plane_normal));
 }
 
 Eigen::Vector3d Meshcat::GetMouseTeleopObjectPosition(std::string_view name) const {
-  return impl().GetMouseTeleopObjectPosition(name);
+  return impl().GetMouseTeleopObjectPosition(std::move(name));
 }
 
 Meshcat::Gamepad Meshcat::GetGamepad() const {

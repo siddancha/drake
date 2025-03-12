@@ -833,9 +833,9 @@ class Meshcat {
 
   /** Adds a mouse-based teleoperation widget to the scene.
   @param name The name of this teleoperation widget
-  @param path The path in the scene tree of the object to which drag controls will be applied.
+  @param object_path The path in the scene tree of the object to which drag controls will be applied.
   @param drag_plane_normal The normal vector of the plane that constrains widget motion */
-  void AddMouseTeleop(std::string name, std::string path,
+  void AddMouseTeleop(std::string name, std::string object_path,
                       Eigen::Vector3d drag_plane_normal);
 
   /** Gets the current translation of the mouse teleop widget named `name`.
