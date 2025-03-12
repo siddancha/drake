@@ -42,15 +42,20 @@ int do_main() {
   // Add a mouse teleop controller that can be dragged in the XY plane
 
   // Create a cylinder object
-  const std::string meshcat_path = "/drake/red_cylinder";
+  const std::string cylinder_path = "/drake/red_cylinder";
   const double cylinder_radius = 0.1;
   const double cylinder_length = 0.2;
+  const Rgba cylinder_rgba = Rgba(1, 0, 0);
   const Cylinder cylinder (cylinder_radius, cylinder_length);
-  meshcat->SetObject(meshcat_path, cylinder);
+  meshcat->SetObject(cylinder_path, cylinder, cylinder_rgba);
+
+  // Set cylinder above the XY plane.
+  const std::vector<double> cylinder_position {0, 0, 0.5 * cylinder_length};
+  meshcat->SetProperty(cylinder_path, "position", cylinder_position);
 
   // Make cylinder draggable by adding mouse teleop controls.
   const Vector3d drag_plane_normal{0, 0, 1};  // XY plane
-  meshcat->AddMouseTeleop("draggable_cylinder", meshcat_path,
+  meshcat->AddMouseTeleop("draggable_cylinder", cylinder_path,
                           drag_plane_normal);
 
   std::cout << "\n\nOpen your browser to the URL:" << meshcat->web_url() << "\n";
