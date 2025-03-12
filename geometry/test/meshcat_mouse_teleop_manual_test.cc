@@ -88,7 +88,7 @@ int do_main() {
       std::cout << "\rCurrent position: ["
                 << current_position.x() << ", "
                 << current_position.y() << ", "
-                << current_position.z() << "]    " << std::endl;
+                << current_position.z() << "]    " << std::flush;
       
       // Sleep briefly to avoid flooding the console
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
