@@ -533,8 +533,8 @@ struct SetMouseTeleopControl {
             'type': 'mouse_teleop',
             'name': '{teleop_name}',
             'value': event.object.position,
-          }
-	      renderer.render(scene, camera);
+          }}));
+          renderer.render(scene, camera);
       });
 
       // Add hover event listeners for visual feedback
@@ -552,8 +552,8 @@ struct SetMouseTeleopControl {
 
     })""",
       fmt::arg("teleop_name", name),
-      fmt::arg("radius", cylinder_radius),
-      fmt::arg("length", cylinder_length),
+      fmt::arg("cylinder_radius", cylinder_radius),
+      fmt::arg("cylinder_length", cylinder_length),
       fmt::arg("normal_x", drag_plane_normal.x()),
       fmt::arg("normal_y", drag_plane_normal.y()),
       fmt::arg("normal_z", drag_plane_normal.z()));

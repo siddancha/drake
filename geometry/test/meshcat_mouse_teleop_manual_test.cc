@@ -59,7 +59,7 @@ int do_main() {
     const Vector3d teleop_position{0, 0, 0.5};
     const RigidTransformd teleop_transform(teleop_position);
     const Vector3d drag_plane_normal{0, 0, 1};  // XY plane
-    
+
     meshcat->AddMouseTeleop("draggable_cylinder", "mouse_teleop", 
                             cylinder_radius, cylinder_length,
                             teleop_transform, drag_plane_normal);
