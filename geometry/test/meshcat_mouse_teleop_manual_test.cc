@@ -28,50 +28,33 @@ namespace {
 
 using common::MaybePauseForUser;
 
-// Utility function to trim leading whitespace from a multi-line string.
-std::string ltrim(std::string text) {
-  std::istringstream iss(text);
-  std::string result;
-  std::string line;
-  while (std::getline(iss, line)) {
-    if (!result.empty()) {
-      result += "\n";
-    }
-    // Find the first non-whitespace character.
-    size_t pos = line.find_first_not_of(" \t");
-    if (pos != std::string::npos) {
-      result += line.substr(pos);
-    } else {
-      result += line;
-    }
+// Returns an offset pointer inside message that skips over leading newlines.
+const char* ltrim(const char* message) {
+  while (*message == '\n') {
+    ++message;
   }
-  return result;
+  return message;
 }
 
 int do_main() {
   auto meshcat = std::make_shared<Meshcat>();
 
   // Add a mouse teleop controller that can be dragged in the XY plane
-  {
-    // Create a draggable cylinder with the Z-axis as the drag plane normal
-    const double cylinder_radius = 0.1;
-    const double cylinder_length = 0.2;
-    const RigidTransformd teleop_transform;
-    const Vector3d drag_plane_normal{0, 0, 1};  // XY plane
 
-    meshcat->AddMouseTeleop("draggable_cylinder", "mouse_teleop", 
-                            cylinder_radius, cylinder_length,
-                            teleop_transform, drag_plane_normal);
+  // Create a draggable cylinder with the Z-axis as the drag plane normal
+  const double cylinder_radius = 0.1;
+  const double cylinder_length = 0.2;
+  const RigidTransformd teleop_transform;
+  const Vector3d drag_plane_normal{0, 0, 1};  // XY plane
 
-    std::cout << "- A red draggable cylinder has been added. You can click and drag it "
-              << "along the XY plane.\n";
-  }
+  meshcat->AddMouseTeleop("draggable_cylinder", "mouse_teleop",
+                          cylinder_radius, cylinder_length,
+                          teleop_transform, drag_plane_normal);
 
-  std::cout << "\nOpen your browser to the URL:\n\n"
-            << meshcat->web_url() << "\n\n";
+  std::cout << "\n\nOpen your browser to the URL:" << meshcat->web_url() << "\n";
 
   std::cout << ltrim(R"""(
-- You should see a red cylinder that can be dragged in the XY plane.
+- A red draggable cylinder has been added.
 - Click and drag the cylinder to move it around.
 - The cylinder should only move horizontally (in the XY plane).
 - When you hover over the cylinder, it should have a subtle glow effect.
