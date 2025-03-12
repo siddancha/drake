@@ -842,7 +842,7 @@ class Meshcat {
    @param name The name of the mouse teleop widget to query
    @returns The current translation vector of the widget in world coordinates
    @throws std::exception if `name` is not a registered mouse teleop widget */
-  Eigen::Vector3d GetMouseTeleopTranslation(std::string_view name) const;
+  Eigen::Vector3d GetMouseTeleopObjectPosition(std::string_view name) const;
 
   /** Status of a gamepad obtained from the Meshcat javascript client. */
   struct Gamepad {

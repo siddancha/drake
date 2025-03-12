@@ -43,6 +43,7 @@ int do_main() {
 
   // Create a cylinder object
   const std::string cylinder_path = "/drake/red_cylinder";
+  const std::string teleop_name = "cylinder_teleop";
   const double cylinder_radius = 0.1;
   const double cylinder_length = 0.2;
   const Rgba cylinder_rgba = Rgba(1, 0, 0);
@@ -55,8 +56,7 @@ int do_main() {
 
   // Make cylinder draggable by adding mouse teleop controls.
   const Vector3d drag_plane_normal{0, 0, 1};  // XY plane
-  meshcat->AddMouseTeleop("draggable_cylinder", cylinder_path,
-                          drag_plane_normal);
+  meshcat->AddMouseTeleop(teleop_name, cylinder_path, drag_plane_normal);
 
   std::cout << "\n\nOpen your browser to the URL:" << meshcat->web_url() << "\n";
 
@@ -72,12 +72,12 @@ int do_main() {
   std::cout << "Starting position tracking loop. Press Ctrl+C to exit.\n";
   try {
     while (true) {
-      Vector3d current_position = meshcat->GetMouseTeleopTranslation("draggable_cylinder");
+      const Vector3d position = meshcat->GetMouseTeleopObjectPosition(teleop_name);
       // Clear the previous line and print the updated position
       std::cout << "\rCurrent position: ["
-                << current_position.x() << ", "
-                << current_position.y() << ", "
-                << current_position.z() << "]    " << std::flush;
+                << position.x() << ", "
+                << position.y() << ", "
+                << position.z() << "]    " << std::flush;
       
       // Sleep briefly to avoid flooding the console
       std::this_thread::sleep_for(std::chrono::milliseconds(100));

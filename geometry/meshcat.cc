@@ -1846,7 +1846,7 @@ class Meshcat::Impl {
   }
 
   // This function is public via the PIMPL.
-  Eigen::Vector3d GetMouseTeleopTranslation(std::string_view name) const {
+  Eigen::Vector3d GetMouseTeleopObjectPosition(std::string_view name) const {
     DRAKE_DEMAND(IsThread(main_thread_id_));
 
     std::lock_guard<std::mutex> lock(controls_mutex_);
@@ -2905,8 +2905,8 @@ void Meshcat::AddMouseTeleop(std::string name, std::string path,
   impl().AddMouseTeleop(name, path, drag_plane_normal);
 }
 
-Eigen::Vector3d Meshcat::GetMouseTeleopTranslation(std::string_view name) const {
-  return impl().GetMouseTeleopTranslation(name);
+Eigen::Vector3d Meshcat::GetMouseTeleopObjectPosition(std::string_view name) const {
+  return impl().GetMouseTeleopObjectPosition(name);
 }
 
 Meshcat::Gamepad Meshcat::GetGamepad() const {
