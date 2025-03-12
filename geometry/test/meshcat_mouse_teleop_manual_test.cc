@@ -79,14 +79,24 @@ int do_main() {
 )""");
   MaybePauseForUser();
 
-  // Display the current position of the mouse teleop controller
-  // Vector3d current_position = meshcat->GetMouseTeleopTranslation("draggable_cylinder");
-  // std::cout << "Current position of the draggable cylinder: ["
-  //           << current_position.x() << ", "
-  //           << current_position.y() << ", "
-  //           << current_position.z() << "]\n";
+  // Display the current position of the mouse teleop controller in a loop
+  std::cout << "Starting position tracking loop. Press Ctrl+C to exit.\n";
+  try {
+    while (true) {
+      Vector3d current_position = meshcat->GetMouseTeleopTranslation("draggable_cylinder");
+      // Clear the previous line and print the updated position
+      std::cout << "\rCurrent position: ["
+                << current_position.x() << ", "
+                << current_position.y() << ", "
+                << current_position.z() << "]    " << std::endl;
+      
+      // Sleep briefly to avoid flooding the console
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+  } catch (const std::exception& e) {
+    std::cout << "\nPosition tracking stopped: " << e.what() << std::endl;
+  }
 
-  MaybePauseForUser();
   return 0;
 }
 

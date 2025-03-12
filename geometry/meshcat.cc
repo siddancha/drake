@@ -2370,10 +2370,10 @@ class Meshcat::Impl {
       }
       return;
     }
-    if (data.type == "mouse_teleop" && data.dragged_object_position.has_value()) {
+    if (data.type == "mouse_teleop" && data.dragged_object_position.size() == 3) {
       auto iter = mouse_teleops_.find(data.name);
       if (iter != mouse_teleops_.end()) {
-        const Eigen::Vector3d& translation = data.dragged_object_position->cast<double>();
+        const Eigen::Vector3d& translation = Eigen::Map<const Eigen::Vector3d>(data.dragged_object_position.data());
         iter->second.transform.set_translation(translation);
       }
       return;

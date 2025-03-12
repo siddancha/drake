@@ -532,7 +532,7 @@ struct SetMouseTeleopControl {
         this.connection.send(msgpack.encode({{
           'type': 'mouse_teleop',
           'name': '{teleop_name}',
-          'value': event.object.position,
+          'dragged_object_position': event.object.position.toArray(),
         }}));
         renderer.render(scene, camera);
       }});
@@ -646,11 +646,11 @@ struct UserInterfaceEvent {
   std::string type;
   std::string name;
   std::optional<double> value;
-  std::optional<Eigen::Vector3f> dragged_object_position;
+  std::vector<double> dragged_object_position;
   std::optional<internal::Gamepad> gamepad;
   std::vector<double> camera_pose;
   std::optional<bool> is_perspective{};
-  MSGPACK_DEFINE_MAP(type, name, value, gamepad, camera_pose, is_perspective);
+  MSGPACK_DEFINE_MAP(type, name, value, dragged_object_position, gamepad, camera_pose, is_perspective);
 };
 
 }  // namespace internal
