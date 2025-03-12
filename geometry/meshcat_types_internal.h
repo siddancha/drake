@@ -524,17 +524,17 @@ struct SetMouseTeleopControl {
         renderer.domElement,
       );
 
-      const websocket_send = (event) => {{
+      const websocket_send = () => {{
         this.connection.send(msgpack.encode({{
           'type': 'mouse_teleop',
           'name': '{teleop_name}',
-          'dragged_object_position': event.object.position.toArray(),
+          'dragged_object_position': object.position.toArray(),
         }}));
       }}
 
       // Add callback to send object's position on drag.
       dragControls.addEventListener('drag', (event) => {{
-        websocket_send(event);
+        websocket_send();
         renderer.render(scene, camera);
       }});
 
@@ -550,6 +550,9 @@ struct SetMouseTeleopControl {
         event.object.material.emissive.setScalar(0.0);
         renderer.render(scene, camera);
       }});
+
+      // Update initial positions.
+      websocket_send();
     )""",
       fmt::arg("teleop_name", name),
       fmt::arg("path", path),
