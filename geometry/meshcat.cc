@@ -2374,7 +2374,7 @@ class Meshcat::Impl {
       DRAKE_DEMAND(data.dragged_object_position->size() == 3);
       auto iter = mouse_teleops_.find(data.name);
       if (iter != mouse_teleops_.end()) {
-        const Eigen::Vector3d& translation = Eigen::Map<const Eigen::Vector3d>(data.dragged_object_position->data());
+        const auto translation = Eigen::Map<const Eigen::Vector3d>(data.dragged_object_position->data());
         iter->second.transform.set_translation(translation);
       }
       return;
