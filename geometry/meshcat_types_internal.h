@@ -505,7 +505,7 @@ struct SetMouseTeleopControl {
       const cylinder_radius = {cylinder_radius};
       const cylinder_length = {cylinder_length};
       const geometry = new THREE.CylinderGeometry(
-	      cylinder_radius, cylinder_radius, cylinder_length, 32,
+        cylinder_radius, cylinder_radius, cylinder_length, 32,
       );
       const material = new THREE.MeshStandardMaterial({{ color: 0xff0000 }});
       const cylinder = new THREE.Mesh(geometry, material);
@@ -520,34 +520,34 @@ struct SetMouseTeleopControl {
 
       // Initialize DragControls.
       const dragControls = new MeshCat.DragControls(
-	      cylinder,
-	      camera,
-	      orbitControls,
-	      dragPlaneNormal,
-	      renderer.domElement,
+        cylinder,
+        camera,
+        orbitControls,
+        dragPlaneNormal,
+        renderer.domElement,
       );
 
       // Add callback to send object's position on drag.
       dragControls.addEventListener('drag', (event) => {{
-          this.connection.send(msgpack.encode({{
-            'type': 'mouse_teleop',
-            'name': '{teleop_name}',
-            'value': event.object.position,
-          }});
-          renderer.render(scene, camera);
+        this.connection.send(msgpack.encode({{
+          'type': 'mouse_teleop',
+          'name': '{teleop_name}',
+          'value': event.object.position,
+        }}));
+        renderer.render(scene, camera);
       }});
 
       // Add hover event listeners for visual feedback
       dragControls.addEventListener('hoveron', (event) => {{
-	      // Set emissive color to create a subtle glow effect when hovering
-	      event.object.material.emissive.setScalar(0.2);
-	      renderer.render(scene, camera);
+        // Set emissive color to create a subtle glow effect when hovering
+        event.object.material.emissive.setScalar(0.2);
+        renderer.render(scene, camera);
       }});
 
       dragControls.addEventListener('hoveroff', (event) => {{
-	      // Reset emissive color when not hovering
-	      event.object.material.emissive.setScalar(0.0);
-	      renderer.render(scene, camera);
+        // Reset emissive color when not hovering
+        event.object.material.emissive.setScalar(0.0);
+        renderer.render(scene, camera);
       }});
 
       return cylinder;
