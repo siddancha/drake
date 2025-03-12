@@ -843,6 +843,12 @@ class Meshcat {
                       math::RigidTransformd init_transform,
                       Eigen::Vector3d drag_plane_normal);
 
+  /** Gets the current translation of the mouse teleop widget named `name`.
+   @param name The name of the mouse teleop widget to query
+   @returns The current translation vector of the widget in world coordinates
+   @throws std::exception if `name` is not a registered mouse teleop widget */
+  Eigen::Vector3d GetMouseTeleopTranslation(std::string_view name) const;
+
   /** Status of a gamepad obtained from the Meshcat javascript client. */
   struct Gamepad {
     /** Passes this object to an Archive.

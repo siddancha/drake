@@ -1849,6 +1849,18 @@ class Meshcat::Impl {
     });
   }
 
+  // This function is public via the PIMPL.
+  Eigen::Vector3d GetMouseTeleopTranslation(std::string_view name) const {
+    DRAKE_DEMAND(IsThread(main_thread_id_));
+
+    std::lock_guard<std::mutex> lock(controls_mutex_);
+    auto iter = mouse_teleops_.find(name);
+    if (iter == mouse_teleops_.end()) {
+      ThrowThingNotFound("mouse_teleop", name, mouse_teleops_);
+    }
+    return iter->second.transform.translation();
+  }
+
   Meshcat::Gamepad GetGamepad() const {
     DRAKE_DEMAND(IsThread(main_thread_id_));
 
@@ -2205,12 +2217,22 @@ class Meshcat::Impl {
         std::stringstream message_stream;
         msgpack::pack(message_stream, b_iter->second);
         ws->send(message_stream.str());
-      } else {
-        auto s_iter = sliders_.find(c);
-        DRAKE_DEMAND(s_iter != sliders_.end());
+        break;
+      }
+      auto s_iter = sliders_.find(c);
+      if (s_iter != sliders_.end()) {
         std::stringstream message_stream;
         msgpack::pack(message_stream, s_iter->second);
         ws->send(message_stream.str());
+        break;
+      }
+      auto m_iter = mouse_teleops_.find(c);
+      DRAKE_DEMAND(m_iter != mouse_teleops_.end());
+      {
+        std::stringstream message_stream;
+        msgpack::pack(message_stream, m_iter->second);
+        ws->send(message_stream.str());
+        break;
       }
     }
 
@@ -2345,6 +2367,14 @@ class Meshcat::Impl {
           DRAKE_DEMAND(ws != nullptr);
           ws->publish("all", message_stream.str(), uWS::OpCode::BINARY);
         }
+      }
+      return;
+    }
+    if (data.type == "mouse_teleop" && data.dragged_object_position.has_value()) {
+      auto iter = mouse_teleops_.find(data.name);
+      if (iter != mouse_teleops_.end()) {
+        const Eigen::Vector3d& translation = data.dragged_object_position->cast<double>();
+        iter->second.transform.set_translation(translation);
       }
       return;
     }
@@ -2879,6 +2909,10 @@ void Meshcat::AddMouseTeleop(std::string name, std::string path,
                              Eigen::Vector3d drag_plane_normal) {
   impl().AddMouseTeleop(name, path, cylinder_radius, cylinder_length,
                         init_transform, drag_plane_normal);
+}
+
+Eigen::Vector3d Meshcat::GetMouseTeleopTranslation(std::string_view name) const {
+  return impl().GetMouseTeleopTranslation(name);
 }
 
 Meshcat::Gamepad Meshcat::GetGamepad() const {
