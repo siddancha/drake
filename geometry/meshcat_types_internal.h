@@ -646,7 +646,7 @@ struct UserInterfaceEvent {
   std::string type;
   std::string name;
   std::optional<double> value;
-  std::vector<double> dragged_object_position;
+  std::optional<std::vector<double>> dragged_object_position;
   std::optional<internal::Gamepad> gamepad;
   std::vector<double> camera_pose;
   std::optional<bool> is_perspective{};
