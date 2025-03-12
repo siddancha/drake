@@ -550,7 +550,9 @@ struct SetMouseTeleopControl {
 	      renderer.render(scene, camera);
       }});
 
-    }})""",
+      return cylinder;
+    }}
+    )""",
       fmt::arg("teleop_name", name),
       fmt::arg("cylinder_radius", cylinder_radius),
       fmt::arg("cylinder_length", cylinder_length),
