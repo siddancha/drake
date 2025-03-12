@@ -495,7 +495,7 @@ struct SetMouseTeleopControl {
   Eigen::Vector3d drag_plane_normal;
 
   std::string transpile_to_threejs_code() const {
-    return fmt::format(R"""(() => {
+    return fmt::format(R"""(() => {{
       const orbitControls = this.controls;
       const scene = this.scene;
       const camera = this.camera;
@@ -507,7 +507,7 @@ struct SetMouseTeleopControl {
       const geometry = new THREE.CylinderGeometry(
 	      cylinder_radius, cylinder_radius, cylinder_length, 32,
       );
-      const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+      const material = new THREE.MeshStandardMaterial({{ color: 0xff0000 }});
       const cylinder = new THREE.Mesh(geometry, material);
       cylinder.position.set(0, 0, cylinder_length / 2);
       cylinder.rotation.x = Math.PI / 2;  // z-up to MeshCat's y-up
@@ -528,29 +528,29 @@ struct SetMouseTeleopControl {
       );
 
       // Add callback to send object's position on drag.
-      dragControls.addEventListener('drag', (event) => {
+      dragControls.addEventListener('drag', (event) => {{
           this.connection.send(msgpack.encode({{
             'type': 'mouse_teleop',
             'name': '{teleop_name}',
             'value': event.object.position,
           }});
           renderer.render(scene, camera);
-      });
+      }});
 
       // Add hover event listeners for visual feedback
-      dragControls.addEventListener('hoveron', (event) => {
+      dragControls.addEventListener('hoveron', (event) => {{
 	      // Set emissive color to create a subtle glow effect when hovering
 	      event.object.material.emissive.setScalar(0.2);
 	      renderer.render(scene, camera);
-      });
+      }});
 
-      dragControls.addEventListener('hoveroff', (event) => {
+      dragControls.addEventListener('hoveroff', (event) => {{
 	      // Reset emissive color when not hovering
 	      event.object.material.emissive.setScalar(0.0);
 	      renderer.render(scene, camera);
-      });
+      }});
 
-    })""",
+    }})""",
       fmt::arg("teleop_name", name),
       fmt::arg("cylinder_radius", cylinder_radius),
       fmt::arg("cylinder_length", cylinder_length),
