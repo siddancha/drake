@@ -63,7 +63,7 @@ int do_main() {
     meshcat->AddMouseTeleop("draggable_cylinder", "mouse_teleop", 
                             cylinder_radius, cylinder_length,
                             teleop_transform, drag_plane_normal);
-    
+
     std::cout << "- A red draggable cylinder has been added. You can click and drag it "
               << "along the XY plane.\n";
   }

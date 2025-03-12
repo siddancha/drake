@@ -533,7 +533,7 @@ struct SetMouseTeleopControl {
             'type': 'mouse_teleop',
             'name': '{teleop_name}',
             'value': event.object.position,
-          }}));
+          }});
           renderer.render(scene, camera);
       });
 
