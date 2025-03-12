@@ -56,8 +56,7 @@ int do_main() {
     // Create a draggable cylinder with the Z-axis as the drag plane normal
     const double cylinder_radius = 0.1;
     const double cylinder_length = 0.2;
-    const Vector3d teleop_position{0, 0, 0.5};
-    const RigidTransformd teleop_transform(teleop_position);
+    const RigidTransformd teleop_transform;
     const Vector3d drag_plane_normal{0, 0, 1};  // XY plane
 
     meshcat->AddMouseTeleop("draggable_cylinder", "mouse_teleop", 
