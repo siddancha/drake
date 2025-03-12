@@ -51,7 +51,7 @@ int do_main() {
 
   // Set cylinder above the XY plane.
   const std::vector<double> cylinder_position {0, 0, 0.5 * cylinder_length};
-  meshcat->SetProperty(cylinder_path, "position", cylinder_position);
+  meshcat->SetProperty(cylinder_path + "/<object>", "position", cylinder_position);
 
   // Make cylinder draggable by adding mouse teleop controls.
   const Vector3d drag_plane_normal{0, 0, 1};  // XY plane

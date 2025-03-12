@@ -524,13 +524,17 @@ struct SetMouseTeleopControl {
         renderer.domElement,
       );
 
-      // Add callback to send object's position on drag.
-      dragControls.addEventListener('drag', (event) => {{
+      const websocket_send = (event) => {{
         this.connection.send(msgpack.encode({{
           'type': 'mouse_teleop',
           'name': '{teleop_name}',
           'dragged_object_position': event.object.position.toArray(),
         }}));
+      }}
+
+      // Add callback to send object's position on drag.
+      dragControls.addEventListener('drag', (event) => {{
+        websocket_send(event);
         renderer.render(scene, camera);
       }});
 
