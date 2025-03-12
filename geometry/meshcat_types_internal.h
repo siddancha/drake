@@ -486,31 +486,28 @@ struct SetSliderControl {
 };
 
 struct SetMouseTeleopControl {
-  std::string type{"set_object_from_code"};
+  std::string type{"eval_code"};
   std::string name;
   std::string path;
-  double cylinder_radius{};
-  double cylinder_length{};
-  math::RigidTransformd transform;
   Eigen::Vector3d drag_plane_normal;
+  Eigen::Vector3d position;
 
   std::string transpile_to_threejs_code() const {
-    return fmt::format(R"""(() => {{
+    return fmt::format(R"""(
       const orbitControls = this.controls;
       const scene = this.scene;
       const camera = this.camera;
       const renderer = this.renderer;
 
-      // Create a cylinder and apply DragControls
-      const cylinder_radius = {cylinder_radius};
-      const cylinder_length = {cylinder_length};
-      const geometry = new THREE.CylinderGeometry(
-        cylinder_radius, cylinder_radius, cylinder_length, 32,
-      );
-      const material = new THREE.MeshStandardMaterial({{ color: 0xff0000 }});
-      const cylinder = new THREE.Mesh(geometry, material);
-      cylinder.position.set(0, 0, cylinder_length / 2);
-      cylinder.rotation.x = Math.PI / 2;  // z-up to MeshCat's y-up
+      // Split the path string into segments and remove empty segments
+      const pathSegments = '{path}'.split('/').filter(Boolean).concat(["<object>"]);
+      
+      // Get the object from the scene by path
+      const object = this.scene_tree.find(pathSegments).object;
+      if (!object) {{
+        console.error(`Object at path '{path}' not found in the scene`);
+        // return null;
+      }}
 
       // Define a custom drag plane normal.
       const dragPlaneNormal = new THREE.Vector3({normal_x}, {normal_y}, {normal_z});
@@ -520,7 +517,7 @@ struct SetMouseTeleopControl {
 
       // Initialize DragControls.
       const dragControls = new MeshCat.DragControls(
-        cylinder,
+        object,
         camera,
         orbitControls,
         dragPlaneNormal,
@@ -549,13 +546,9 @@ struct SetMouseTeleopControl {
         event.object.material.emissive.setScalar(0.0);
         renderer.render(scene, camera);
       }});
-
-      return cylinder;
-    }}
     )""",
       fmt::arg("teleop_name", name),
-      fmt::arg("cylinder_radius", cylinder_radius),
-      fmt::arg("cylinder_length", cylinder_length),
+      fmt::arg("path", path),
       fmt::arg("normal_x", drag_plane_normal.x()),
       fmt::arg("normal_y", drag_plane_normal.y()),
       fmt::arg("normal_z", drag_plane_normal.z()));
@@ -563,9 +556,8 @@ struct SetMouseTeleopControl {
 
   // NOLINTNEXTLINE(runtime/references) cpplint disapproves of msgpack choices.
   void msgpack_pack(msgpack::packer<std::stringstream>& o) const {
-    o.pack_map(3);
+    o.pack_map(2);
     PACK_MAP_VAR(o, type);
-    PACK_MAP_VAR(o, path);
     const std::string code = transpile_to_threejs_code();
     PACK_MAP_VAR(o, code);
   }
