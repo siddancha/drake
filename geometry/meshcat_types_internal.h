@@ -395,6 +395,12 @@ struct SetObjectData {
   MSGPACK_DEFINE_MAP(type, path, object);
 };
 
+struct EvalJavaScriptCodeData {
+  std::string type{"eval_code"};
+  std::string code;
+  MSGPACK_DEFINE_MAP(type, code);
+};
+
 struct SetObjectFromThreeJsCodeData {
   std::string type{"set_object_from_code"};
   std::string path;

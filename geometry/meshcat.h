@@ -228,6 +228,13 @@ class Meshcat {
                  bool wireframe = false, double wireframe_line_width = 1.0,
                  SideOfFaceToRender side = kDoubleSide);
 
+  /** Evaluates arbitrary THREE.js JavaScript code in the Meshcat viewer.
+  @param code a string containing JavaScript code to be executed in the Meshcat
+              viewer's THREE.js context. The viewer can be accessed as `this`
+              in the code.
+  */
+  void EvalJavaScriptCode(std::string_view code);
+
   /** Sets the "object" at a given `path` in the scene tree by executing native
   THREE.js JavaScript code. The code snippet is expected to be a JavaScript
   lambda function that returns a THREE.Object3D. This object is then set at

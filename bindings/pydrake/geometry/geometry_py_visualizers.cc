@@ -282,6 +282,9 @@ void DefineMeshcat(py::module m) {
             py::arg("wireframe") = false, py::arg("wireframe_line_width") = 1.0,
             py::arg("side") = Meshcat::SideOfFaceToRender::kDoubleSide,
             cls_doc.SetObject.doc_triangle_surface_mesh)
+        .def("EvalJavaScriptCode",
+            py::overload_cast<std::string_view>(&Class::EvalJavaScriptCode),
+            py::arg("code"), cls_doc.EvalJavaScriptCode.doc)
         .def("SetObjectFromThreeJsCode",
             py::overload_cast<std::string_view, std::string_view>(
                 &Class::SetObjectFromThreeJsCode),

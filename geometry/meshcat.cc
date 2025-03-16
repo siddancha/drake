@@ -1111,6 +1111,27 @@ class Meshcat::Impl {
   }
 
   // This function is public via the PIMPL.
+  void EvalJavaScriptCode(std::string_view code) {
+    DRAKE_DEMAND(IsThread(main_thread_id_));
+
+    internal::EvalJavaScriptCodeData data;
+    data.code = code;
+
+    // Generate a random path name as key to store this message string in the
+    // scene tree.
+    std::string path = "/eval_code/" + uuid_generator_.GenerateRandom();
+
+    Defer([this, data = std::move(data), path = std::move(path)]() {
+      std::stringstream message_stream;
+      msgpack::pack(message_stream, data);
+      std::string message = message_stream.str();
+      app_->publish("all", message, uWS::OpCode::BINARY, false);
+      SceneTreeElement& e = scene_tree_root_[path];
+      e.object().emplace() = std::move(message);
+    });
+  }
+
+  // This function is public via the PIMPL.
   void SetObjectFromThreeJsCode(std::string_view path,
                                 std::string_view three_js_lambda) {
     DRAKE_DEMAND(IsThread(main_thread_id_));
@@ -2651,6 +2672,10 @@ void Meshcat::SetObject(std::string_view path,
                         const Rgba& rgba, bool wireframe,
                         double wireframe_line_width, SideOfFaceToRender side) {
   impl().SetObject(path, mesh, rgba, wireframe, wireframe_line_width, side);
+}
+
+void Meshcat::EvalJavaScriptCode(std::string_view code) {
+  impl().EvalJavaScriptCode(code);
 }
 
 void Meshcat::SetObjectFromThreeJsCode(std::string_view path,
