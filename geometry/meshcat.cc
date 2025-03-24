@@ -1619,7 +1619,7 @@ class Meshcat::Impl {
         }
       }
       buttons_[data.name] = data;
-      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size()));
+      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size() + mouse_teleops_.size()));
     }
 
     Defer([this, data = std::move(data)]() {
@@ -1661,7 +1661,7 @@ class Meshcat::Impl {
       DRAKE_DEMAND(c_iter != controls_.end());
       controls_.erase(c_iter);
       data.name = std::move(name);
-      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size()));
+      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size() + mouse_teleops_.size()));
     }
 
     Defer([this, data = std::move(data)]() {
@@ -1713,7 +1713,7 @@ class Meshcat::Impl {
       }
       controls_.emplace_back(data.name);
       sliders_[data.name] = data;
-      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size()));
+      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size() + mouse_teleops_.size()));
     }
 
     Defer([this, data = std::move(data)]() {
@@ -1802,7 +1802,7 @@ class Meshcat::Impl {
       DRAKE_DEMAND(c_iter != controls_.end());
       controls_.erase(c_iter);
       data.name = std::move(name);
-      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size()));
+      DRAKE_DEMAND(controls_.size() == (buttons_.size() + sliders_.size() + mouse_teleops_.size()));
     }
 
     Defer([this, data = std::move(data)]() {
