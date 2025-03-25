@@ -556,9 +556,6 @@ struct SetMouseTeleopControl {
         event.object.material.emissive.setScalar(0.0);
         renderer.render(scene, camera);
       }});
-
-      // Update initial positions.
-      websocket_send();
     )""",
       fmt::arg("teleop_name", name),
       fmt::arg("object_path", object_path),
