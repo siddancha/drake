@@ -50,13 +50,24 @@ int do_main() {
   const Cylinder cylinder (cylinder_radius, cylinder_length);
   meshcat->SetObject(cylinder_path, cylinder, cylinder_rgba);
 
-  // Set cylinder above the XY plane.
-  const std::vector<double> cylinder_position {0, 0, 0.5 * cylinder_length};
-  meshcat->SetProperty(cylinder_path + "/<object>", "position", cylinder_position);
-
   // Make cylinder draggable by adding mouse teleop controls.
   const Vector3d drag_plane_normal{0, 0, 1};  // XY plane
   meshcat->AddMouseTeleop(teleop_name, cylinder_path, drag_plane_normal);
+
+  // Set cylinder sprite's position above the XY plane.
+  const Vector3d cylinder_positions {0, 0, 0.5 * cylinder_length};
+  meshcat->SetMouseTeleopSpritePosition(teleop_name, cylinder_positions);
+
+  std::cout << "\nSet sprite position to: ["
+            << cylinder_positions.x() << ", "
+            << cylinder_positions.y() << ", "
+            << cylinder_positions.z() << "]\n";
+
+  const Vector3d get_position = meshcat->GetMouseTeleopSpritePosition(teleop_name);
+  std::cout << "GetMouseTeleopSpritePosition: ["
+            << get_position.x() << ", "
+            << get_position.y() << ", "
+            << get_position.z() << "]";
 
   std::cout << "\n\nOpen your browser to the URL:" << meshcat->web_url() << "\n";
 
@@ -72,7 +83,7 @@ int do_main() {
   std::cout << "Starting position tracking loop. Press Ctrl+C to exit.\n";
   try {
     while (true) {
-      const Vector3d position = meshcat->GetMouseTeleopObjectPosition(teleop_name);
+      const Vector3d position = meshcat->GetMouseTeleopSpritePosition(teleop_name);
       // Clear the previous line and print the updated position
       std::cout << "\rCurrent position: ["
                 << position.x() << ", "

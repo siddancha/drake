@@ -1890,7 +1890,8 @@ class Meshcat::Impl {
 
     // Set position property of the mouse teleop sprite in Meshcat.
     std::string property_path = FullPath(iter->second.object_path) + "/<object>";
-    SetProperty(property_path, "position", position);
+    const std::array<double, 3> position_vector {position.x(), position.y(), position.z()};
+    SetProperty(property_path, "position", position_vector);
 
     // Update the position in the mouse teleop object.
     iter->second.position = position;
