@@ -2234,14 +2234,12 @@ class Meshcat::Impl {
         std::stringstream message_stream;
         msgpack::pack(message_stream, b_iter->second);
         ws->send(message_stream.str());
-        break;
       }
       auto s_iter = sliders_.find(c);
       if (s_iter != sliders_.end()) {
         std::stringstream message_stream;
         msgpack::pack(message_stream, s_iter->second);
         ws->send(message_stream.str());
-        break;
       }
       auto m_iter = mouse_teleops_.find(c);
       DRAKE_DEMAND(m_iter != mouse_teleops_.end());
@@ -2249,7 +2247,6 @@ class Meshcat::Impl {
         std::stringstream message_stream;
         msgpack::pack(message_stream, m_iter->second);
         ws->send(message_stream.str());
-        break;
       }
     }
 
