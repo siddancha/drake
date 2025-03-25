@@ -1867,7 +1867,7 @@ class Meshcat::Impl {
   }
 
   // This function is public via the PIMPL.
-  Eigen::Vector3d GetMouseTeleopObjectPosition(std::string_view name) const {
+  Eigen::Vector3d GetMouseTeleopSpritePosition(std::string_view name) const {
     DRAKE_DEMAND(IsThread(main_thread_id_));
 
     std::lock_guard<std::mutex> lock(controls_mutex_);
@@ -1876,6 +1876,24 @@ class Meshcat::Impl {
       ThrowThingNotFound("mouse_teleop", name, mouse_teleops_);
     }
     return iter->second.position;
+  }
+
+  // This function is public via the PIMPL.
+  void SetMouseTeleopSpritePosition(std::string_view name, const Eigen::Vector3d& position) {
+    DRAKE_DEMAND(IsThread(main_thread_id_));
+
+    std::lock_guard<std::mutex> lock(controls_mutex_);
+    auto iter = mouse_teleops_.find(name);
+    if (iter == mouse_teleops_.end()) {
+      ThrowThingNotFound("mouse_teleop", name, mouse_teleops_);
+    }
+
+    // Set position property of the mouse teleop sprite in Meshcat.
+    std::string property_path = FullPath(iter->second.object_path) + "/<object>";
+    SetProperty(property_path, "position", position);
+
+    // Update the position in the mouse teleop object.
+    iter->second.position = position;
   }
 
   Meshcat::Gamepad GetGamepad() const {
@@ -2927,8 +2945,12 @@ void Meshcat::AddMouseTeleop(std::string name, std::string object_path,
   impl().AddMouseTeleop(std::move(name), object_path, std::move(drag_plane_normal));
 }
 
-Eigen::Vector3d Meshcat::GetMouseTeleopObjectPosition(std::string_view name) const {
-  return impl().GetMouseTeleopObjectPosition(std::move(name));
+Eigen::Vector3d Meshcat::GetMouseTeleopSpritePosition(std::string_view name) const {
+  return impl().GetMouseTeleopSpritePosition(std::move(name));
+}
+
+void Meshcat::SetMouseTeleopSpritePosition(std::string_view name, const Eigen::Vector3d& position) {
+  return impl().SetMouseTeleopSpritePosition(std::move(name), position);
 }
 
 Meshcat::Gamepad Meshcat::GetGamepad() const {

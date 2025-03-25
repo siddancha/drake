@@ -398,8 +398,11 @@ void DefineMeshcat(py::module m) {
         .def("AddMouseTeleop", &Class::AddMouseTeleop, py::arg("name"),
             py::arg("object_path"), py::arg("drag_plane_normal"),
             cls_doc.AddMouseTeleop.doc)
-        .def("GetMouseTeleopObjectPosition", &Class::GetMouseTeleopObjectPosition,
-            py::arg("name"), cls_doc.GetMouseTeleopObjectPosition.doc)
+        .def("GetMouseTeleopSpritePosition", &Class::GetMouseTeleopSpritePosition,
+            py::arg("name"), cls_doc.GetMouseTeleopSpritePosition.doc)
+        .def("SetMouseTeleopSpritePosition", &Class::SetMouseTeleopSpritePosition,
+            py::arg("name"), py::arg("position"),
+            cls_doc.SetMouseTeleopSpritePosition.doc)
         .def("DeleteAddedControls", &Class::DeleteAddedControls,
             cls_doc.DeleteAddedControls.doc)
         .def("GetGamepad", &Class::GetGamepad, cls_doc.GetGamepad.doc)

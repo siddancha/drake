@@ -838,18 +838,24 @@ class Meshcat {
    the meshcat browser (e.g. for cameras and lights). */
   void DeleteAddedControls();
 
-  /** Adds a mouse-based teleoperation widget to the scene.
-  @param name The name of this teleoperation widget
+  /** Adds a mouse-based teleoperation sprite to the scene.
+  @param name The name of this teleoperation sprite
   @param object_path The path in the scene tree of the object to which drag controls will be applied.
-  @param drag_plane_normal The normal vector of the plane that constrains widget motion */
+  @param drag_plane_normal The normal vector of the plane that constrains sprite motion */
   void AddMouseTeleop(std::string name, std::string object_path,
                       Eigen::Vector3d drag_plane_normal);
 
-  /** Gets the current translation of the mouse teleop widget named `name`.
-   @param name The name of the mouse teleop widget to query
-   @returns The current translation vector of the widget in world coordinates
-   @throws std::exception if `name` is not a registered mouse teleop widget */
-  Eigen::Vector3d GetMouseTeleopObjectPosition(std::string_view name) const;
+  /** Gets the current translation of the mouse teleop sprite named `name`.
+   @param name The name of the mouse teleop sprite to query
+   @returns The current translation vector of the sprite in world coordinates
+   @throws std::exception if `name` is not a registered mouse teleop sprite */
+  Eigen::Vector3d GetMouseTeleopSpritePosition(std::string_view name) const;
+
+  /** Sets the translation of the mouse teleop sprite named `name`.
+   @param name The name of the mouse teleop sprite to set
+   @param position The new translation vector in world coordinates
+   @throws std::exception if `name` is not a registered mouse teleop sprite */
+  void SetMouseTeleopSpritePosition(std::string_view name, const Eigen::Vector3d& position);
 
   /** Status of a gamepad obtained from the Meshcat javascript client. */
   struct Gamepad {
